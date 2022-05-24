@@ -38,7 +38,7 @@ async function run() {
             const query = { _id: ObjectId(id) }
             const result = await ProductCollection.findOne(query)
             res.send(result)
-          })
+        })
         // get all reviews
         app.get('/reviews', async (req, res) => {
             const query = {}
@@ -46,9 +46,29 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        // post  review
+        app.post('/reviews', async (req, res) => {
+            const newService = req.body
+            const result = await ReviewCollection.insertOne(newService)
+            res.send(result)
+        })
 
-
-
+        // update item
+        app.put('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const updateUser = req.body;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    Quantity: updateUser.Quantity,
+                    QuantityDecrese: updateUser.QuantityDecrese
+                }
+            }
+            const result = await ProductCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
 
 
     } finally {
