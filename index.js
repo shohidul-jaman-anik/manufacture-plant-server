@@ -24,6 +24,7 @@ async function run() {
         await client.connect();
         const ProductCollection = client.db("manufacture-plant").collection("products");
         const ReviewCollection = client.db("manufacture-plant").collection("reviews");
+        const OrderCollection = client.db("manufacture-plant").collection("orders");
 
         // get all product
         app.get('/products', async (req, res) => {
@@ -62,14 +63,33 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    Quantity: updateUser.Quantity,
-                    QuantityDecrese: updateUser.QuantityDecrese
+                    MOQ: updateUser.MOQ,
+                    MOQDecrese: updateUser.MOQDecrese
                 }
             }
             const result = await ProductCollection.updateOne(filter, updateDoc, options)
             res.send(result)
         })
-
+        // order collection api
+        app.post('/orders', async (req, res) => {
+            const order = req.body
+            const result = await OrderCollection.insertOne(order)
+            res.send(result)
+        })
+        // get order item
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const bookings = await OrderCollection.find(query).toArray();
+            res.send(bookings)
+        })
+        // delete order item
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await OrderCollection.findOne(query)
+            res.send(result)
+        })
 
     } finally {
         // await client.close();
