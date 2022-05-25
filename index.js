@@ -8,19 +8,20 @@ require('dotenv').config()
 const port = process.env.PORT || 5000
 
 // middlewhare
-// app.use(cors())
-// app.use(express.json())
-
-
-// Middlewares---
-const corsConfig = {
-    origin: ['https://manufacturing-plant.web.app/'],
-    credentials: true,
-    methods: ["GET", "POST", "DELETE","PUT"],
-}
-app.use(cors(corsConfig))
-app.options('*', cors(corsConfig))
+app.use(cors())
 app.use(express.json())
+
+
+// Middlewares
+
+// const corsConfig = {
+//     origin: ['https://manufacturing-plant.web.app/'],
+//     credentials: true,
+//     methods: ["GET", "POST", "DELETE","PUT"],
+// }
+// app.use(cors(corsConfig))
+// app.options('*', cors(corsConfig))
+// app.use(express.json())
 
 
 
