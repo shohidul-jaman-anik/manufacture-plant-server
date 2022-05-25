@@ -25,12 +25,26 @@ async function run() {
         const ProductCollection = client.db("manufacture-plant").collection("products");
         const ReviewCollection = client.db("manufacture-plant").collection("reviews");
         const OrderCollection = client.db("manufacture-plant").collection("orders");
+        const userCollection = client.db("manufacture-plant").collection("users");
 
         // get all product
         app.get('/products', async (req, res) => {
             const query = {}
             const cursor = ProductCollection.find(query)
             const result = await cursor.toArray()
+            res.send(result)
+        })
+        // post database
+        app.post('/products', async (req, res) => {
+            const newService = req.body
+            const result = await ProductCollection.insertOne(newService)
+            res.send(result)
+        })
+        // delete item
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await ProductCollection.deleteOne(query)
             res.send(result)
         })
         // get single service(purchage)
@@ -79,6 +93,7 @@ async function run() {
         // get order item
         app.get('/orders', async (req, res) => {
             const email = req.query.email;
+            console.log(email)
             const query = { email: email };
             const bookings = await OrderCollection.find(query).toArray();
             res.send(bookings)
@@ -86,10 +101,49 @@ async function run() {
         // delete order item
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id
+            console.log(id)
             const query = { _id: ObjectId(id) }
-            const result = await OrderCollection.findOne(query)
+            console.log(query)
+            const result = await OrderCollection.deleteOne(query)
             res.send(result)
         })
+
+        // delete products
+        app.delete('/products/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await ProductCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        // insert user (login/register) information
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email
+            const user = req.body
+            const filter = { email: email };
+            const option = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            }
+            const result = await userCollection.updateOne(filter, updateDoc, option)
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET)
+            res.send({ result, token })
+        })
+        // Make Admin
+        app.put('/user/admin/:email', async (req, res) => {
+            const email = req.params.email
+            const filter = { email: email };
+            const updateDoc = {
+                $set: { role: 'admin' },
+            }
+            const result = await userCollection.updateOne(filter, updateDoc)
+            res.send(result)
+        })
+        // get all users
+        app.get('/user', async (req, res) => {
+            const users = await userCollection.find().toArray();
+            res.send(users);
+        });
 
     } finally {
         // await client.close();
