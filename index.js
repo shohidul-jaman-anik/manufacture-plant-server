@@ -8,11 +8,20 @@ require('dotenv').config()
 const port = process.env.PORT || 5000
 
 // middlewhare
-app.use(cors())
+// app.use(cors())
+// app.use(express.json())
+
+
+// Middlewares---
+const corsConfig = {
+    origin: ['https://manufacturing-plant.web.app/'],
+    credentials: true,
+    methods: ["GET", "POST", "DELETE","PUT"],
+}
+app.use(cors(corsConfig))
+app.options('*', cors(corsConfig))
 app.use(express.json())
 
-
-// const collection = client.db("test").collection("devices");
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5zmrg.mongodb.net/?retryWrites=true&w=majority`;
@@ -126,7 +135,7 @@ async function run() {
                 $set: user,
             }
             const result = await userCollection.updateOne(filter, updateDoc, option)
-            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET)
+            const token =  process.env.ACCESS_TOKEN_SECRET
             res.send({ result, token })
         })
         // get all users
