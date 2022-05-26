@@ -36,6 +36,7 @@ async function run() {
         const ReviewCollection = client.db("manufacture-plant").collection("reviews");
         const OrderCollection = client.db("manufacture-plant").collection("orders");
         const userCollection = client.db("manufacture-plant").collection("users");
+        const profileCollection = client.db("manufacture-plant").collection("profile");
 
         // get all product
         app.get('/products', async (req, res) => {
@@ -136,7 +137,7 @@ async function run() {
                 $set: user,
             }
             const result = await userCollection.updateOne(filter, updateDoc, option)
-            const token =  process.env.ACCESS_TOKEN_SECRET
+            const token = process.env.ACCESS_TOKEN_SECRET
             res.send({ result, token })
         })
         // get all users
@@ -161,8 +162,12 @@ async function run() {
             const isAdmin = user.role === 'admin';
             res.send({ admin: isAdmin })
         })
-
-
+        // update profile post database
+        app.post('/updateProfile', async (req, res) => {
+            const order = req.body
+            const result = await profileCollection.insertOne(order)
+            res.send(result)
+        })
     } finally {
         // await client.close();
     }
