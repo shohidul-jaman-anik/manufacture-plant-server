@@ -188,7 +188,7 @@ async function run() {
             const booking = await OrderCollection.findOne(query);
             res.send(booking);
         })
-        // // 
+        // 
         // app.post('/create-payment-intent',  async (req, res) => {
         //     const service = req.body;
         //     const price = service.PPU;
