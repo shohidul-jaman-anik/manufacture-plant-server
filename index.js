@@ -85,8 +85,9 @@ async function run() {
             res.send(result)
         })
         // post  review
-        app.post('/reviews', async (req, res) => {
+        app.post('/review', async (req, res) => {
             const newService = req.body
+            console.log(newService)
             const result = await ReviewCollection.insertOne(newService)
             res.send(result)
         })
@@ -181,13 +182,16 @@ async function run() {
             res.send(result)
         })
         // -----------------------for payment--------------------
+
+
         //    get all booking  by id
-        app.get('/booking/:id', async (req, res) => {
+        app.get('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const booking = await OrderCollection.findOne(query);
             res.send(booking);
         })
+        
         // 
         // app.post('/create-payment-intent',  async (req, res) => {
         //     const service = req.body;
