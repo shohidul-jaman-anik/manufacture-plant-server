@@ -8,6 +8,7 @@ require('dotenv').config()
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 
 // const { restart } = require('nodemon');
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000
 
 // middlewhare
@@ -146,18 +147,19 @@ async function run() {
 
 
         app.put("/user/:email", async (req, res) => {
-            const data = req.params.email
+            const email = req.params.email
             // console.log(data)
-            const email = req.body
-            console.log(email)
+            const data = req.body
+            console.log(data)
             const filter = { email: email }
-            const upsert = { upsert: true }
+            const options = { upsert: true }
             const updateDoc = {
-                $set: email
+                $set: data
             }
-            const result = await userCollection.updateOne(filter, updateDoc, upsert)
-            res.send(result)
+            const result = await userCollection.updateOne(filter, updateDoc,options)
+            const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
 
+            res.send({result,token})
         })
 
 
