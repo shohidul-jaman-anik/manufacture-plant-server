@@ -47,8 +47,8 @@ async function run() {
         const ProductCollection = client.db("manufacture-plant").collection("products");
         const ReviewCollection = client.db("manufacture-plant").collection("reviews");
         const OrderCollection = client.db("manufacture-plant").collection("orders");
-        const userCollection = client.db("manufacture-plant").collection("users");
         const profileCollection = client.db("manufacture-plant").collection("profile");
+        const userCollection = client.db("manufacture-plant").collection("users");
 
         // get all product
         app.get('/products', async (req, res) => {
@@ -140,24 +140,34 @@ async function run() {
             res.send(result)
         })
 
-        // insert user (login/register) information
-        app.put('/user/:email', async (req, res) => {
-            const email = req.params.email
-            const user = req.body
-            const filter = { email: email };
-            const option = { upsert: true };
+        //-------------------------------------- 
+        // JWT Token Start
+        // -------------------------------------- 
+
+
+        app.put("/user/:email", async (req, res) => {
+            const data = req.params.email
+            // console.log(data)
+            const email = req.body
+            console.log(email)
+            const filter = { email: email }
+            const upsert = { upsert: true }
             const updateDoc = {
-                $set: user,
+                $set: email
             }
-            const result = await userCollection.updateOne(filter, updateDoc, option)
-            const token = process.env.ACCESS_TOKEN_SECRET
-            res.send({ result, token })
+            const result = await userCollection.updateOne(filter, updateDoc, upsert)
+            res.send(result)
+
         })
-        // get all users
-        app.get('/user', async (req, res) => {
-            const users = await userCollection.find().toArray();
-            res.send(users);
-        });
+
+
+
+
+
+
+
+
+
         // Make Admin
         app.put('/user/admin/:email', async (req, res) => {
             const email = req.params.email
@@ -191,7 +201,9 @@ async function run() {
             const booking = await OrderCollection.findOne(query);
             res.send(booking);
         })
-        
+
+
+
         // 
         // app.post('/create-payment-intent',  async (req, res) => {
         //     const service = req.body;
