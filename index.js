@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
+var jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 require('dotenv').config()
@@ -8,7 +8,7 @@ require('dotenv').config()
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 
 // const { restart } = require('nodemon');
-const jwt = require('jsonwebtoken');
+
 const port = process.env.PORT || 5000
 
 // middlewhare
