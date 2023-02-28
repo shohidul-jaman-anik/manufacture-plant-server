@@ -44,7 +44,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try {
-        await client.connect();
+        client.connect();
         const ProductCollection = client.db("manufacture-plant").collection("products");
         const ReviewCollection = client.db("manufacture-plant").collection("reviews");
         const OrderCollection = client.db("manufacture-plant").collection("orders");
@@ -145,7 +145,6 @@ async function run() {
         // JWT Token Start
         // -------------------------------------- 
 
-
         app.put("/user/:email", async (req, res) => {
             const email = req.params.email
             // console.log(data)
@@ -156,10 +155,10 @@ async function run() {
             const updateDoc = {
                 $set: data
             }
-            const result = await userCollection.updateOne(filter, updateDoc,options)
-            const token = jwt.sign({email:email}, process.env.ACCESS_TOKEN_SECRET);
+            const result = await userCollection.updateOne(filter, updateDoc, options)
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET);
 
-            res.send({result,token})
+            res.send({ result, token })
         })
 
 
